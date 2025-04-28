@@ -1,0 +1,113 @@
+- name: Jenkins
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Aggiornare la lista dei pacchetti
+      package:
+        update_cache: yes
+    
+    - name: Assicura che pip sia installato
+      package:
+        name: python3-pip
+        state: present
+
+    - name: Installa modulo Python 'requests'
+      pip:
+        name: requests
+
+    - name: Aggiungi repo Docker su Rocky
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+      when: ansible_os_family == "RedHat"
+
+    - name: Installa Docker su Rocky
+      dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Abilitare Docker all'avvio
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Verifica che Docker sia in esecuzione
+      command: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Mostra la versione di Docker
+      debug:
+        var: docker_version.stdout
+  
+    # Creo una Network dedicata !!
+    - name: Creazione di una rete Docker personalizzata
+      docker_network:
+        name: jenkins_network
+        driver: bridge
+        ipam_config:
+          - subnet: "172.20.1.0/24"
+
+    # serve per avere un immagine sempre aggiornata!
+    - name: Pull Jenkins image
+      docker_image:
+        name: jenkins/jenkins
+        tag: lts
+        source: pull
+
+
+    - name: Ensure /var/jenkins_home exists and has correct ownership
+      file:
+        path: /var/jenkins_home
+        state: directory
+        owner: 1000
+        group: 1000
+        recurse: yes
+        mode: '0755'
+        
+    #Installo Container Jenkins (master)
+    - name: Run Jenkins container
+      docker_container:
+        name: jenkins
+        image: jenkins/jenkins:lts
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        volumes:
+          - /var/jenkins_home:/var/jenkins_home
+
+    # # Automatizzo la creazione di un nodo!
+    # - name: Create Jenkins node
+    #   community.general.jenkins_node:
+    #     url: http://192.168.33.51:8080
+    #     user: admin
+    #     token: 114fe90b708bc71336075881028f3cfa41
+    #     name: docker-agent
+    #     state: present
+       
+
+    # Installo Container Jenkins (agent)
+    - name: Run Jenkins agent container
+      docker_container:
+        name: jenkins-agent
+        image: jenkins/inbound-agent
+        state: started
+        restart_policy: always
+        env:
+          JENKINS_URL: "http://192.168.33.51:8080"
+          JENKINS_SECRET: "338f533e5773e95a9349f2ff8bd7ce2cf4945f92276e874290f54012ea3b9886"
+          JENKINS_AGENT_NAME: "docker-agent"
+
+ 
+
+
+
