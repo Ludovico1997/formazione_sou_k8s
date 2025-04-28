@@ -1,0 +1,57 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradienti morbidi per il testo -->
+    <linearGradient id="gradK" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A8D5BA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7BBF8C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B0E57C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradS" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A3D39C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388E3C;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Ombra avanzata per profondità -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="4" dy="4" stdDeviation="6" flood-color="#2E2E2E" flood-opacity="0.8"/>
+    </filter>
+
+    <!-- Bagliore intenso -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blurred"/>
+      <feMerge>
+        <feMergeNode in="blurred"/>
+        <feMergeNode in="SourceAlpha"/>
+      </feMerge>
+    </filter>
+
+    <!-- Animazione di movimento -->
+    <animate id="textAnimation" attributeName="x" values="30%;50%;70%;30%" dur="4s" repeatCount="indefinite"/>
+  </defs>
+
+  <!-- Sfondo dinamico con movimento -->
+  <rect width="100%" height="100%" fill="#121212">
+    <animate attributeName="fill" values="#121212;#1a1a1a;#121212" dur="5s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Testo con gradiente e animazione -->
+  <text x="30%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-size="96" font-family="Arial Black, Arial, sans-serif" 
+        fill="url(#gradK)" filter="url(#shadow)" filter="url(#glow)">
+    K
+    <animate attributeName="fill" values="url(#gradK);url(#grad8);url(#gradS)" dur="6s" repeatCount="indefinite"/>
+  </text>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-size="96" font-family="Arial Black, Arial, sans-serif" 
+        fill="url(#grad8)" filter="url(#shadow)" filter="url(#glow)">
+    8
+  </text>
+  <text x="70%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-size="96" font-family="Arial Black, Arial, sans-serif" 
+        fill="url(#gradS)" filter="url(#shadow)" filter="url(#glow)">
+    s
+  </text>
+</svg>
