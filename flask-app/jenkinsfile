@@ -1,9 +1,10 @@
 pipeline {
     agent any
     environment {
-        GIT_URL = 'https://github.com/Ludovico1997/formazione_sou_k8s'
-        IMAGE_NAME = 'ludo97/my_flask'   // Cambia qui col tuo username Docker Hub
-        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'  // <-- imposta questo ID nel tuo Jenkins
+        GIT_URL_MAIN = 'https://github.com/Ludovico1997/formazione_sou_k8s'
+        GIT_URL_DEVELOP= 'https://github.com/Ludovico1997/formazione_sou_k8s/tree/develop'
+        IMAGE_NAME = 'ludo97/my_flask'  
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials' 
 
     }
 
@@ -12,7 +13,7 @@ pipeline {
             steps {
                 echo "Clono la repository da ${GIT_URL}"
                 git url: "${GIT_URL}", branch: 'main'
-                sh 'ls -la'   // Log: vedo i file della repo clonata
+                sh 'ls -la'  
             }
         }
         stage('Docker login') {

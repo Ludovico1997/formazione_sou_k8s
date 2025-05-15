@@ -1,6 +1,5 @@
 - name: Jenkins
   hosts: localhost
-
   tasks:
 
    
@@ -50,93 +49,90 @@
         - /var/run/docker.sock:/var/run/docker.sock
         # -/Users/ludovicoparis/formazione_sou_k8s/Workstation_Mac:/home/vagrant
     
-# # Installazione Docker CLI nel container Jenkins Agent
-#     - name: Aggiorna la cache dei pacchetti dentro Jenkins Agent
-#       community.docker.docker_container_exec:
-#         container: jenkins-agent
-#         command: apt-get update
-#         user: root
-#         tty: true
+# Installazione Docker CLI nel container Jenkins Agent
+    - name: Aggiorna la cache dei pacchetti dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: apt-get update
+        user: root
+        # tty: true
 
-#     - name: Installa Docker CLI nel container Jenkins Agent
-#       become: true
-#       community.docker.docker_container_exec:
-#         container: jenkins-agent
-#         command: apt-get install -y docker.io
-#         user: root
-#         tty: true
+    - name: Install sudo
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: apt-get install -y sudo
+        user: root
+        tty: true
 
-#     - name: Install sudo
-#       community.docker.docker_container_exec:
-#         container: jenkins-agent
-#         command: apt-get install -y sudo
-#         user: root
-#         tty: true
 
-#     # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
-#     - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
-#       become: true
-#       community.docker.docker_container_exec:
-#         container: jenkins-agent
-#         command: usermod -aG docker jenkins
-#         user: root
-#         tty: true
+    - name: Installa Docker CLI nel container Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: apt-get install -y docker.io
+        user: root
 
-#     - name: Installa sudo nel container Jenkins Agent step4
-#       community.docker.docker_container_exec:
-#           container:  jenkins-agent
-#           command: bash -c "echo 'jenkins ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
-#           user: root
-#           tty: true
+
+
+    # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+    - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: usermod -aG docker jenkins
+        user: root
+
+
+    - name: Installa sudo nel container Jenkins Agent step4
+      community.docker.docker_container_exec:
+          container:  jenkins-agent
+          command: bash -c "echo 'jenkins ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
+          user: root
+
           
-#     - name: Install sudo
-#       community.docker.docker_container_exec:
-#         container: jenkins-agent
-#         command: chown root:docker /var/run/docker.sock
-#         user: root
-#         tty: true
+    - name: cambia own sock
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: chown root:docker /var/run/docker.sock
+        user: root
 
-#     - name: Aggiorna la cache dei pacchetti dentro Jenkins Agent
-#       community.docker.docker_container_exec:
-#         container: jenkins
-#         command: apt-get update
-#         user: root
-#         tty: true
 
-#     - name: Installa Docker CLI nel container Jenkins Agent
-#       become: true
-#       community.docker.docker_container_exec:
-#         container: jenkins
-#         command: apt-get install -y docker.io
-#         user: root
-#         tty: true
+    - name: Aggiorna la cache dei pacchetti dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: apt-get update
+        user: root
+        # tty: true
+    
+    - name: Install sudo
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: apt-get install -y sudo
+        user: root
+        # tty: true
 
-#     - name: Install sudo
-#       community.docker.docker_container_exec:
-#         container: jenkins
-#         command: apt-get install -y sudo
-#         user: root
-#         tty: true
+    - name: Installa Docker CLI nel container Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: apt-get install -y docker.io
+        user: root
 
-#     # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
-#     - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
-#       become: true
-#       community.docker.docker_container_exec:
-#         container: jenkins
-#         command: usermod -aG docker jenkins
-#         user: root
-#         tty: true
 
-#     - name: Installa sudo nel container Jenkins Agent step4
-#       community.docker.docker_container_exec:
-#           container:  jenkins
-#           command: bash -c "echo 'jenkins ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
-#           user: root
-#           tty: true
+    # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+    - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: usermod -aG docker jenkins
+        user: root
+
+
+    - name: Installa sudo nel container Jenkins Agent step4
+      community.docker.docker_container_exec:
+          container:  jenkins
+          command: bash -c "echo 'jenkins ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
+          user: root
+ 
           
-#     - name: Install sudo
-#       community.docker.docker_container_exec:
-#         container: jenkins
-#         command: chown root:docker /var/run/docker.sock
-#         user: root
-#         tty: true
+    - name: cambia own dir sock
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: chown root:docker /var/run/docker.sock
+        user: root
