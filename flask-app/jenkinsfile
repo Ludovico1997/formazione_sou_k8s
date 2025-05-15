@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    environment {
+        GIT_URL = 'https://github.com/Ludovico1997/formazione_sou_k8s'
+        IMAGE_NAME = 'ludo97/my_flask'   // Cambia qui col tuo username Docker Hub
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'  // <-- imposta questo ID nel tuo Jenkins
+
+    }
+
+    stages {
+        stage('Clona repo git') {
+            steps {
+                echo "Clono la repository da ${GIT_URL}"
+                git url: "${GIT_URL}", branch: 'main'
+                sh 'ls -la'   // Log: vedo i file della repo clonata
+            }
+        }
+        stage('Docker login') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
+                    }
+                }
+            }
+        }
+        stage('Build & Push Docker image') {
+            steps {
+                script {
+                    sh 'ls -la'
+                    echo "Costruisco Docker image: ${IMAGE_NAME}:${env.BUILD_ID}"
+                    def customImage = docker.build("${IMAGE_NAME}:${env.BUILD_ID}", "flask-app")
+                    customImage.push()
+                    echo "Immagine pushata con successo: ${IMAGE_NAME}:${env.BUILD_ID}"
+                }
+            }
+        }
+    }
+}
+
+
+// sudo docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+// https://www.jenkins.io/doc/book/pipeline/docker/
