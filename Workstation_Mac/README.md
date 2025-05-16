@@ -20,6 +20,9 @@ Definisce la configurazione della VM:
 4. Creo una **Docker Network** dedicata.
 5. Eseguo un container **Jenkins Master** configurato per l'accesso sulle porte `8080` e `50000`.
 6. Eseguo un container **Jenkins Agent**, connesso al Master.
+7. Vado a configurare i container inserendo il sudo, il docker.
+8. Inserisco l'utente nel gruppo docker.
+9. Cambio il **chown** del file Sock.
 
 ---
 
