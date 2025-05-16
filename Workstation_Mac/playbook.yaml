@@ -127,7 +127,6 @@
         tty: true
 
     - name: Installa Docker CLI nel container Jenkins Agent
-      become: true
       community.docker.docker_container_exec:
         container: jenkins-agent
         command: apt-get install -y docker.io
@@ -143,7 +142,6 @@
 
     # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
     - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
-      become: true
       community.docker.docker_container_exec:
         container: jenkins-agent
         command: usermod -aG docker jenkins
@@ -172,7 +170,6 @@
         tty: true
 
     - name: Installa Docker CLI nel container Jenkins Agent
-      become: true
       community.docker.docker_container_exec:
         container: jenkins
         command: apt-get install -y docker.io
@@ -188,7 +185,6 @@
 
     # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
     - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
-      become: true
       community.docker.docker_container_exec:
         container: jenkins
         command: usermod -aG docker jenkins

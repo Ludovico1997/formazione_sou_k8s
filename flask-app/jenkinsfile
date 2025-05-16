@@ -11,7 +11,9 @@ pipeline {
             steps {
                 script {
                     echo "Clono la repository da ${GIT_URL}"
-                    if ("${GIT_BRANCH}" == "main" || "${GIT_BRANCH}" == "develop"){
+                    if (env.TAG){
+                        sh "git clone --branch ${TAG} --depth 1 --single-branch ${GIT_URL} "
+                    } else if ("${GIT_BRANCH}" == "main" || "${GIT_BRANCH}" == "develop"){
                         git url: "${GIT_URL}", branch: "${GIT_BRANCH}"
                         sh 'ls -la'   // Log: vedo i file della repo clonata
                     } else {
@@ -37,8 +39,9 @@ pipeline {
 
                     // echo "Costruisco Docker image: ${IMAGE_NAME}:${GIT_BRANCH}"
                     echo"${GIT_BRANCH}"
-                    if ( "${GIT_BRANCH}" == "main") {
-                        def customImage = docker.build("${IMAGE_NAME}:latest", "flask-app")
+                    if ("${GIT_BRANCH}" == "main" && env.TAG?.trim()) {
+                        def IMAGE_TAG = env.TAG
+                        def customImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "flask-app")
                         customImage.push()
                         echo "Immagine pushata con successo: ${IMAGE_NAME}:${IMAGE_TAG}"
                     } else if ( "${GIT_BRANCH}" == "develop"){
@@ -47,10 +50,13 @@ pipeline {
                         def customImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "flask-app")
                         customImage.push()
                         echo "Immagine pushata con successo: ${IMAGE_NAME}:${IMAGE_TAG}"
-                    } else {
+                    } else if ( "${GIT_BRANCH}" == "main") {
+                        def customImage = docker.build("${IMAGE_NAME}:latest", "flask-app")
+                        customImage.push()
+                        echo "Immagine pushata con successo: ${IMAGE_NAME}:${IMAGE_TAG}"
+                    }else {
                         sh 'echo "Unsupported branch: ${GIT_BRANCH}"'
                     }
-                    
                 }
             }
         }
