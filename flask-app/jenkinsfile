@@ -7,6 +7,11 @@ pipeline {
     }
 
     stages {
+        stage('Pulizia workspace') {
+            steps {
+                cleanWs()
+            }
+        }
         stage('Clona repo git') {
             steps {
                 script {
@@ -41,7 +46,7 @@ pipeline {
                     echo"${GIT_BRANCH}"
                     if ("${GIT_BRANCH}" == "main" && env.TAG?.trim()) {
                         def IMAGE_TAG = env.TAG
-                        def customImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "flask-app")
+                        def customImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "formazione_sou_k8s/flask-app")
                         customImage.push()
                         echo "Immagine pushata con successo: ${IMAGE_NAME}:${IMAGE_TAG}"
                     } else if ( "${GIT_BRANCH}" == "develop"){
@@ -51,6 +56,7 @@ pipeline {
                         customImage.push()
                         echo "Immagine pushata con successo: ${IMAGE_NAME}:${IMAGE_TAG}"
                     } else if ( "${GIT_BRANCH}" == "main") {
+                        def IMAGE_TAG = "latest"
                         def customImage = docker.build("${IMAGE_NAME}:latest", "flask-app")
                         customImage.push()
                         echo "Immagine pushata con successo: ${IMAGE_NAME}:${IMAGE_TAG}"

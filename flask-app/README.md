@@ -42,3 +42,8 @@ Questo Jenkinsfile definisce una pipeline CI/CD per automatizzare il processo di
 
     - Se il ramo non è supportato, viene mostrato un messaggio.
 
+**NB:** 
+Deve essere implementato l'errore del Tag errato!.
+Mentre se inserisco un branch che non esiste la pipeline evidenzia gli errori ma va a buon fine, se inserisco una release non esistente la pipeline andrà in errore.
+
+
