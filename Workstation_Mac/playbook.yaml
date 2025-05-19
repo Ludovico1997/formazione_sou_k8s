@@ -140,7 +140,6 @@
         user: root
         tty: true
 
-    # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
     - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
       community.docker.docker_container_exec:
         container: jenkins-agent
@@ -183,7 +182,6 @@
         user: root
         tty: true
 
-    # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
     - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
       community.docker.docker_container_exec:
         container: jenkins

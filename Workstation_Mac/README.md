@@ -9,7 +9,7 @@ Progetto per automatizzare il più possibile l'installazione tramite **Ansible**
 ### `Vagrantfile`
 
 Definisce la configurazione della VM:
-- Definisce la network con IP statico `192.168.33.51`
+- Definisce la network con IP statico `192.168.33.61`
 - Specifica l'uso di **Ansible** per il provisioning.
 
 ### `playbook.yml`
@@ -32,7 +32,7 @@ Definisce la configurazione della VM:
 - Vai su **Gestisci Jenkins > Nodes > New Node**.
 - Inserisci un nome per il nodo (es. `docker-agent`).
 - Configura i dettagli del nodo.
-- Salva il nodo e, nella schermata del nodo appena creato, copia il `SECRET`.
+- Salva il nodo e nella schermata del nodo appena creato, copia il `SECRET`.
 
 2. ### Inserimento Secret
 - Nel file `playbook.yaml`, sostituisci il valore di `JENKINS_SECRET` nella sezione env dell'Agent:
