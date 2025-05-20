@@ -33,5 +33,11 @@ pipeline {
                 sh "helm list"
             }
         }
+
+        stage('install') {
+            steps('Install Helm chart') {
+                sh "helm install mychart /var/jenkins_home/workspace/helm-install/formazione_sou_k8s/charts/helm-chart -n formazione-sou"
+            }
+        }
     }
 }
