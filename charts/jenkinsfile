@@ -12,6 +12,22 @@ pipeline {
                 cleanWs()
             }
         }
+        stage('Clona repo git') {
+            steps {
+                script {
+                    sh "git clone ${GIT_URL}"
+                }
+            }
+        }
+        stage('Docker login') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo "$DOCKER_PASS" | sudo docker login -u "$DOCKER_USER" --password-stdin'
+                    }
+                }
+            }
+        }
         stage('Lista helm') {
             steps('Install Helm chart') {
                 sh "helm list"
