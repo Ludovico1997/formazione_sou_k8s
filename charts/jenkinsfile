@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    environment {
+        GIT_URL = 'https://github.com/Ludovico1997/formazione_sou_k8s'
+        IMAGE_NAME = 'ludo97/my_flask'   // Cambia qui col tuo username Docker Hub
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'  // <-- imposta questo ID nel tuo Jenkins
+    }
+
+    stages {
+        stage('Pulizia workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('Lista helm') {
+            steps('Install Helm chart') {
+                sh "helm list"
+            }
+        }
+    }
+}

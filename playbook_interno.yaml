@@ -1,0 +1,246 @@
+- name: Jenkins
+  hosts: localhost
+  tasks:
+
+   
+    #Installo Container Jenkins (master)
+    - name: Run Jenkins container
+      docker_container:
+        name: jenkins
+        image: jenkins/jenkins:lts
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        networks:
+        - name: jenkins_network        # associazione alla docker netwhork
+          ipv4_address: "172.20.1.7"        # assegnazione ip statico
+        volumes:
+        - jenkins_data:/var/jenkins_home
+        - /var/run/docker.sock:/var/run/docker.sock
+        - /Users/ludovicoparis/sock_kube:/home/jenkins/.kube ##cambia percorso!!
+        - /Users/ludovicoparis/sock_kube:/var/jenkins_home/.kube
+      # privileged: true
+    # # Automatizzo la creazione di un nodo!
+    # - name: Create Jenkins node
+    #   community.general.jenkins_node:
+    #     url: http://192.168.33.61:8080
+    #     user: admin
+    #     token: 114fe90b708bc71336075881028f3cfa41
+    #     name: docker-agent
+    #     state: present
+       
+
+    #Installo Container Jenkins (agent)
+    - name: Run Jenkins agent container
+      docker_container:
+        name: jenkins-agent
+        image: jenkins/inbound-agent
+        state: started
+        restart_policy: always
+        networks:
+        - name: jenkins_network        
+          ipv4_address: "172.20.1.8"
+        env:
+          JENKINS_URL: "http://172.20.1.7:8080"
+          JENKINS_SECRET: "b1e711fce72d9fa6e3d8d1481d574174226212d2b9b7654226d15797a72056f7"
+          JENKINS_AGENT_NAME: "docker-agent"
+        volumes:
+        - jenkins_data:/var/jenkins_home
+        - /var/run/docker.sock:/var/run/docker.sock
+        - /Users/ludovicoparis/sock_kube:/home/jenkins/.kube ##cambia percorso!!
+        - /Users/ludovicoparis/sock_kube:/var/jenkins_home/.kube
+        # -/Users/ludovicoparis/formazione_sou_k8s/Workstation_Mac:/home/vagrant
+    
+# Installazione Docker CLI nel container Jenkins Agent
+    - name: Aggiorna la cache dei pacchetti dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: apt-get update
+        user: root
+        # tty: true
+
+
+    - name: Install sudo
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: apt-get install -y sudo
+        user: root
+        tty: true
+
+
+    - name: Installa Docker CLI nel container Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: apt-get install -y docker.io
+        user: root
+
+
+
+    # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+    - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: usermod -aG docker jenkins
+        user: root
+
+
+    - name: Installa sudo nel container Jenkins Agent step4
+      community.docker.docker_container_exec:
+          container:  jenkins-agent
+          command: bash -c "echo 'jenkins ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
+          user: root
+
+          
+    - name: cambia own sock
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: chown root:docker /var/run/docker.sock
+        user: root
+    
+    # - name: rinomino il config
+    #   community.docker.docker_container_exec:
+    #     container: jenkins-agent
+    #     command: mv /root/.kube/config_kubectl_docker /root/.kube/config
+    #     user: root
+
+    - name: Download kubectl
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: >
+          sh -c 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s -L https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+        user: root
+        tty: true
+
+
+    - name: Install kubectl 2
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: chmod +x kubectl
+        user: root
+        tty: true
+
+    - name: Install kubectl 3
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: mv kubectl /usr/local/bin/kubectl
+        user: root
+        tty: true
+
+    - name: Install Helm 1
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        user: root
+        tty: true
+    
+    - name: Install Helm 2
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: chmod 700 get_helm.sh
+        user: root
+        tty: true
+      
+    - name: Install Helm 3
+      community.docker.docker_container_exec:
+        container: jenkins-agent
+        command: ./get_helm.sh
+        user: root
+        tty: true
+
+    - name: Aggiorna la cache dei pacchetti dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: apt-get update
+        user: root
+        # tty: true
+    
+    - name: Install sudo
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: apt-get install -y sudo
+        user: root
+        # tty: true
+
+    - name: Installa Docker CLI nel container Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: apt-get install -y docker.io
+        user: root
+
+
+    # Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+    - name: Aggiungi l'utente jenkins al gruppo docker dentro Jenkins Agent
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: usermod -aG docker jenkins
+        user: root
+
+
+    - name: Installa sudo nel container Jenkins Agent step4
+      community.docker.docker_container_exec:
+          container:  jenkins
+          command: bash -c "echo 'jenkins ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
+          user: root
+ 
+          
+    - name: cambia own dir sock
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: chown root:docker /var/run/docker.sock
+        user: root
+
+
+    # - name: rinomino il config
+    #   community.docker.docker_container_exec:
+    #     container: jenkins
+    #     command: mv /root/.kube/config_kubectl_docker /root/.kube/config
+    #     user: root
+
+    - name: Download kubectl
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: >
+          sh -c 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s -L https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+        user: root
+        tty: true
+
+    - name: Install kubectl 2
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: chmod +x kubectl
+        user: root
+        tty: true
+
+    - name: Install kubectl 3
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: mv kubectl /usr/local/bin/kubectl
+        user: root
+        tty: true
+    
+    - name: Install Helm 1
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        user: root
+        tty: true
+    
+    - name: Install Helm 2
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: chmod 700 get_helm.sh
+        user: root
+        tty: true
+      
+    - name: Install Helm 3
+      community.docker.docker_container_exec:
+        container: jenkins
+        command: ./get_helm.sh
+        user: root
+        tty: true
+
+
+# KUBECONFIG=/root/.kube/config_kubectl_docker kubectl get pods
+# https://kubernetes.docker.internal:6443

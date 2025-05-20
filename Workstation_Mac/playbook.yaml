@@ -88,6 +88,7 @@
         volumes:
         - jenkins_data:/var/jenkins_home
         - /var/run/docker.sock:/var/run/docker.sock
+        - /Users/ludovicoparis/.kube:/root/.kube # Cambiare il percorso !!
       # privileged: true
     # # Automatizzo la creazione di un nodo!
     # - name: Create Jenkins node
@@ -116,6 +117,8 @@
         volumes:
         - jenkins_data:/var/jenkins_home
         - /var/run/docker.sock:/var/run/docker.sock
+        - /Users/ludovicoparis/.kube:/root/.kube # Cambiare il percorso !!
+        
         # -/Users/ludovicoparis/formazione_sou_k8s/Workstation_Mac:/home/vagrant
     
 # Installazione Docker CLI nel container Jenkins Agent
@@ -160,6 +163,33 @@
         command: chown root:docker /var/run/docker.sock
         user: root
         tty: true
+    
+    # - name: rinomino il config
+    #   community.docker.docker_container_exec:
+    #     container: jenkins-agent
+    #     command: mv /root/.kube/config_kubectl_docker /root/.kube/config
+    #     user: root
+
+    # - name: Install kubectl
+    #   community.docker.docker_container_exec:
+    #     container: jenkins-agent
+    #     command:  curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+    #     user: root
+    #     tty: true
+
+    # - name: Install kubectl 2
+    #   community.docker.docker_container_exec:
+    #     container: jenkins-agent
+    #     command: chmod +x ./kubectl
+    #     user: root
+    #     tty: true
+
+    # - name: Install kubectl 3
+    #   community.docker.docker_container_exec:
+    #     container: jenkins-agent
+    #     command: mv ./kubectl /usr/local/bin/kubectl
+    #     user: root
+    #     tty: true
 
     - name: Aggiorna la cache dei pacchetti dentro Jenkins Agent
       community.docker.docker_container_exec:
@@ -202,3 +232,30 @@
         command: chown root:docker /var/run/docker.sock
         user: root
         tty: true
+
+    # - name: rinomino il config
+    #   community.docker.docker_container_exec:
+    #     container: jenkins
+    #     command: mv /root/.kube/config_kubectl_docker /root/.kube/config
+    #     user: root
+
+    # - name: Install kubectl
+    #   community.docker.docker_container_exec:
+    #     container: jenkins
+    #     command:  curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+    #     user: root
+    #     tty: true
+
+    # - name: Install kubectl 2
+    #   community.docker.docker_container_exec:
+    #     container: jenkins
+    #     command: chmod +x kubectl
+    #     user: root
+    #     tty: true
+
+    # - name: Install kubectl 3
+    #   community.docker.docker_container_exec:
+    #     container: jenkins
+    #     command: mv kubectl /usr/local/bin/kubectl
+    #     user: root
+    #     tty: true
