@@ -9,12 +9,12 @@ Questo progetto mostra un flusso **CI/CD completo** per il deploy automatico di 
 
 ---
 
-## 📁 Struttura del progetto
+## Struttura del progetto
 
 
 ---
 
-## ⚙️ Requisiti
+## Requisiti
 
 Per testare o usare questo progetto, assicurati di avere:
 

@@ -5,13 +5,13 @@ Lo script esegue step fondamentali per verificare che le best practice siano ris
 
 ---
 
-## 📜 Contenuto
+## Contenuto
 
 - `script.py`: script che esegue controlli automatici sul deployment della Flask app
 
 ---
 
-## ⚙️ Cosa fa lo script?
+## Cosa fa lo script?
 
 1. Crea una **ServiceAccount** in namespace `formazione-sou`
 2. Genera un **token JWT** per autenticarsi via API Server
@@ -25,7 +25,7 @@ Lo script esegue step fondamentali per verificare che le best practice siano ris
 
 ---
 
-## ▶️ Come eseguirlo
+## Come eseguirlo
 
 Assicurati di avere:
 
