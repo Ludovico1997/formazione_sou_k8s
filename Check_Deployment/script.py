@@ -60,17 +60,3 @@ else:
 time.sleep(2)
 
 
-# print("lo yaml ora lo salviamo in un file chiamato deploy.txt")
-# comando_salvo_curl= f'{result_curl.stdout} >> deploy.txt'
-# result_salvo_curl = subprocess.run(comando_salvo_curl, shell=True, capture_output=True, text=True)
-# time.sleep(5) 
-
-# print("Check")
-# comando_salvo_curl= f'{result_curl.stdout} >> deploy.txt'
-# result_salvo_curl = subprocess.run(comando_salvo_curl, shell=True, capture_output=True, text=True)
-# time.sleep(5) 
-
-# for i in range (1, 10):
-#     print(".........")
-#     print("\033[91m" + "livio is the best" + "\033[0m") 
-
